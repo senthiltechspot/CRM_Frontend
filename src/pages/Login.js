@@ -13,7 +13,11 @@ function Login() {
   const [userType, setUserType] = useState("CUSTOMER");
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-
+  if (showSignup) {
+    document.title = "CRM - Sign Up";
+  } else {
+    document.title = "CRM - Log In";
+  }
   useEffect(() => {
     const userType = localStorage.getItem("userType");
     const token = localStorage.getItem("token");
@@ -216,7 +220,11 @@ function Login() {
               <>
                 <p>
                   Already have an account ?
-                  <a className="text-info m-1" onClick={toggleSignup}>
+                  <a
+                    href="#Signup"
+                    className="text-info m-1"
+                    onClick={toggleSignup}
+                  >
                     LogIn
                   </a>
                 </p>
@@ -225,7 +233,11 @@ function Login() {
               <>
                 <p>
                   Don't have an account ?
-                  <a className="text-info m-1" onClick={toggleSignup}>
+                  <a
+                    href="#Login"
+                    className="text-info m-1"
+                    onClick={toggleSignup}
+                  >
                     Sign Up
                   </a>
                 </p>

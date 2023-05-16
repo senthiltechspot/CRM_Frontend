@@ -1,24 +1,84 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Sidebar from "../components/Sidebar";
+import { getAllTickets } from "../api/ticket";
 import TicketTables from "../components/TicketTables";
+import { useNavigate } from "react-router-dom";
+import StatusDashBoard from "../components/StatusDashboard/StatusDashBoard";
 
 function Engineer() {
   const navigate = useNavigate();
   const userType = localStorage.getItem("userType");
+
+  const [ticketDetails, setTicketDetails] = useState([]);
+
+  const [statsData, setStatsData] = useState({
+    open: 0,
+    inprogress: 0,
+    closed: 0,
+    blocked: 0,
+  });
+
+  const fetchTickets = useCallback(() => {
+    getAllTickets()
+      .then((res) => {
+        let data = res.data;
+        console.log(data);
+        setTicketDetails(data);
+        let OPEN = data.filter((item) => {
+          return item.status === "OPEN";
+        });
+        let CLOSED = data.filter((item) => {
+          return item.status === "CLOSED";
+        });
+        let BLOCKED = data.filter((item) => {
+          return item.status === "BLOCKED";
+        });
+        let INPROGRESS = data.filter((item) => {
+          return item.status === "INPROGRESS";
+        });
+        setStatsData({
+          ...statsData,
+          open: OPEN.length,
+          closed: CLOSED.length,
+          blocked: BLOCKED.length,
+          inprogress: INPROGRESS.length,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [statsData]);
+
   useEffect(() => {
-    if (userType === "CUSTOMER") {
-      navigate("/customer");
-    } else if (userType === "ADMIN") {
+    if (userType === "ADMIN") {
       navigate("/admin");
+    } else if (userType === "CUSTOMER") {
+      navigate("/customer");
     }
-  }, [navigate, userType]);
+    fetchTickets();
+    // eslint-disable-next-line
+  }, []);
 
   return (
-    <>
-      {" "}
-      Engineer Dashboard
-      {/* <TicketTables /> */}
-    </>
+    <div className="row bg-light">
+      <div className="col-1">
+        <Sidebar />
+      </div>
+      <div className="col my-4">
+        <StatusDashBoard
+          ticketLength={ticketDetails.length}
+          statsData={statsData}
+        />
+
+        <hr />
+        <div className="container">
+          <TicketTables
+            ticketDetails={ticketDetails}
+            fetchTickets={fetchTickets}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
