@@ -1,62 +1,63 @@
-import React, { useState } from "react";
+import React from "react";
 import MaterialTable from "material-table";
 import { Modal, Button } from "react-bootstrap";
-import { updateUser } from "../api/users";
+import BackDrop from "./BackDrop";
+import useUpdateUser from "../hooks/useUpdateUser";
+import AlertSnackBar from "./AlertSnackBar";
+
 const UserTable = ({ userDetails, fetchUsers }) => {
-  const [usersUpdateModal, setUsersUpdateModal] = useState(false);
-  const [selectedCurrUser, setSelectedCurrUser] = useState(false);
 
-  const closeUsersUpdateModal = () => {
-    setUsersUpdateModal(false);
-  };
-
-  const editUser = (userDetail) => {
-    setSelectedCurrUser(userDetail);
-    setUsersUpdateModal(true);
-  };
-
-  const changeUserDetails = (e) => {
-    if (e.target.name === "status") {
-      selectedCurrUser.userStatus = e.target.value;
-    }
-
-    setSelectedCurrUser({ ...selectedCurrUser });
-  };
-
-  const updateUserFn = (e) => {
-    e.preventDefault();
-
-    const userData = {
-      _id: selectedCurrUser._id,
-      status: selectedCurrUser.userStatus,
-    };
-
-    updateUser(userData)
-      .then((res) => {
-        if (res.status === 200) {
-          console.log("User Updated Successfully");
-          setUsersUpdateModal(false);
-          fetchUsers();
-        }
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
+  const {
+    usersUpdateModal,
+    selectedCurrUser,
+    closeUsersUpdateModal,
+    editUser,
+    changeUserDetails,
+    updateUserFn,
+    Loading,
+    Message,
+    AlertType,
+    OpenAlert,
+    setOpenAlert,
+  } = useUpdateUser(fetchUsers);
+  
   return (
     <div>
       <MaterialTable
         title="User Details"
         columns={[
-          { title: "ID", field: "_id" },
+          { title: "ID", field: "_id", filtering: false },
           { title: "NAME", field: "name" },
           { title: "EMAIL", field: "email" },
           { title: "USER ID", field: "userId" },
-          { title: "USER TYPE", field: "userTypes" },
-          { title: "USER STATUS", field: "userStatus" },
+          {
+            title: "USER TYPE",
+            field: "userTypes",
+            lookup: {
+              ADMIN: "ADMIN",
+              ENGINEER: "ENGINEER",
+              CUSTOMER: "CUSTOMER",
+            },
+          },
+          {
+            title: "USER STATUS",
+            field: "userStatus",
+            lookup: {
+              PENDING: "PENDING",
+              APPROVED: "APPROVED",
+              REJECTED: "REJECTED",
+            },
+          },
         ]}
         data={userDetails}
         onRowClick={(event, rowData) => editUser(rowData)}
+        options={{
+          headerStyle: {
+            backgroundColor: "#01579b",
+            color: "#FFF",
+          },
+          filtering: true,
+        }}
       />
       <Modal show={usersUpdateModal} onHide={closeUsersUpdateModal}>
         <Modal.Header closeButton>
@@ -118,7 +119,14 @@ const UserTable = ({ userDetails, fetchUsers }) => {
           </form>
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
+        <BackDrop openBackDrop={Loading} />
       </Modal>
+      <AlertSnackBar
+        Message={Message}
+        AlertType={AlertType}
+        OpenAlert={OpenAlert}
+        setOpenAlert={setOpenAlert}
+      />
     </div>
   );
 };

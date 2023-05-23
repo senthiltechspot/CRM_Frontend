@@ -1,53 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { getAllTickets } from "../api/ticket";
 import TicketTables from "../components/TicketTables";
 import { useNavigate } from "react-router-dom";
 import StatusDashBoard from "../components/StatusDashboard/StatusDashBoard";
+import useFetchTickets from "../hooks/useFetchTickets";
+import { createTicketsCount } from "../handlers/createTicketsCount";
 
 function Engineer() {
   const navigate = useNavigate();
   const userType = localStorage.getItem("userType");
 
-  const [ticketDetails, setTicketDetails] = useState([]);
-
-  const [statsData, setStatsData] = useState({
-    open: 0,
-    inprogress: 0,
-    closed: 0,
-    blocked: 0,
-  });
-
-  const fetchTickets = useCallback(() => {
-    getAllTickets()
-      .then((res) => {
-        let data = res.data;
-        console.log(data);
-        setTicketDetails(data);
-        let OPEN = data.filter((item) => {
-          return item.status === "OPEN";
-        });
-        let CLOSED = data.filter((item) => {
-          return item.status === "CLOSED";
-        });
-        let BLOCKED = data.filter((item) => {
-          return item.status === "BLOCKED";
-        });
-        let INPROGRESS = data.filter((item) => {
-          return item.status === "INPROGRESS";
-        });
-        setStatsData({
-          ...statsData,
-          open: OPEN.length,
-          closed: CLOSED.length,
-          blocked: BLOCKED.length,
-          inprogress: INPROGRESS.length,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [statsData]);
+  const [ticketDetails, fetchTickets] = useFetchTickets();
+  const statsData = createTicketsCount(ticketDetails);
 
   useEffect(() => {
     if (userType === "ADMIN") {
@@ -55,9 +19,7 @@ function Engineer() {
     } else if (userType === "CUSTOMER") {
       navigate("/customer");
     }
-    fetchTickets();
-    // eslint-disable-next-line
-  }, []);
+  });
 
   return (
     <div className="row bg-light">

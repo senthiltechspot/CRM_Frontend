@@ -1,22 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { getAllTickets } from "../api/ticket";
 import TicketTables from "../components/TicketTables";
 import { useNavigate } from "react-router-dom";
 import StatusDashBoard from "../components/StatusDashboard/StatusDashBoard";
+import useFetchTickets from "../hooks/useFetchTickets";
+import { createTicketsCount } from "../handlers/createTicketsCount";
 
 function Customer() {
   const navigate = useNavigate();
   const userType = localStorage.getItem("userType");
-
-  const [ticketDetails, setTicketDetails] = useState([]);
-
-  const [statsData, setStatsData] = useState({
-    open: 0,
-    inprogress: 0,
-    closed: 0,
-    blocked: 0,
-  });
+  const [ticketDetails, fetchTickets] = useFetchTickets();
+  const statsData = createTicketsCount(ticketDetails);
 
   useEffect(() => {
     if (userType === "ADMIN") {
@@ -25,45 +19,17 @@ function Customer() {
       navigate("/customer");
     }
     console.log("first");
-    fetchTickets();
-
-    // eslint-disable-next-line
   }, []);
 
-  const fetchTickets = () => {
-    getAllTickets()
-      .then((res) => {
-        const data = res.data;
-        setTicketDetails(res.data);
-        console.log(data);
-        let OPEN = data.filter((item) => {
-          return item.status === "OPEN";
-        });
-        let CLOSED = data.filter((item) => {
-          return item.status === "CLOSED";
-        });
-        let BLOCKED = data.filter((item) => {
-          return item.status === "BLOCKED";
-        });
-        let INPROGRESS = data.filter((item) => {
-          return item.status === "INPROGRESS";
-        });
-        setStatsData({
-          ...statsData,
-          open: OPEN.length,
-          closed: CLOSED.length,
-          blocked: BLOCKED.length,
-          inprogress: INPROGRESS.length,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  // const updateStatusData = () => {};
-
   return (
-    <div className="row bg-light">
+    <div
+      className="row "
+      style={{
+        backgroundImage: `url(" https://source.unsplash.com/random/?Animals+Art+Textures+Landscape&1")`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
       <div className="col-1">
         <Sidebar />
       </div>
@@ -74,12 +40,10 @@ function Customer() {
         />
 
         <hr />
-        <div className="container">
-          <TicketTables
-            ticketDetails={ticketDetails}
-            fetchTickets={fetchTickets}
-          />
-        </div>
+        <TicketTables
+          ticketDetails={ticketDetails}
+          fetchTickets={fetchTickets}
+        />
       </div>
     </div>
   );

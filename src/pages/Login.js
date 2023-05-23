@@ -1,39 +1,35 @@
-import { useEffect, useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
+import { useState } from "react";
 import { userSignUp, userSignIn } from "../api/auth";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 function Login() {
   const [showSignup, setShowSignUp] = useState(false);
-
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userType, setUserType] = useState("CUSTOMER");
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const [openBackDrop, setOpenBackDrop] = useState(false);
+
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+    name: "",
+    userId: "",
+    userType: "CUSTOMER",
+  });
+
+  // Handle Title Render
   if (showSignup) {
     document.title = "CRM - Sign Up";
   } else {
     document.title = "CRM - Log In";
   }
-  useEffect(() => {
-    const userType = localStorage.getItem("userType");
-    const token = localStorage.getItem("token");
 
-    if (!token || !userType) {
-      return;
-    }
-
-    if (userType === "ENGINEER") {
-      window.location.href = "/engineer";
-    } else if (userType === "CUSTOMER") {
-      window.location.href = "/customer";
-    } else {
-      window.location.href = "/admin";
-    }
-  }, []);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLoginForm({
+      ...loginForm,
+      [name]: value,
+    });
+  };
 
   const toggleSignup = () => {
     clearState();
@@ -41,46 +37,46 @@ function Login() {
   };
 
   const clearState = () => {
-    setUserId("");
-    setPassword("");
-    setUserName("");
-    setUserEmail("");
-    setError(false);
-    setMessage("");
+    setLoginForm({
+      email: "",
+      password: "",
+      name: "",
+      userId: "",
+      userType: "CUSTOMER",
+    });
   };
 
   const onSignUp = (e) => {
-    const data = {
-      name: userName,
-      userId: userId,
-      email: userEmail,
-      userType: userType,
-      password: password,
-    };
-
     e.preventDefault();
 
-    if (userId.length < 5) {
+    if (loginForm.userId.length < 5) {
       setError(true);
-      setMessage("UserId should be of 5 to 10 characters");
+      setMessage("userId should be of 5 to 10 characters");
       return;
-    } else if (password.length < 5 || password.length > 12) {
+    } else if (
+      loginForm.password.length < 5 ||
+      loginForm.password.length > 12
+    ) {
       setError(true);
       setMessage("Password should of 5 to 12 characters");
       return;
     }
 
     //API call
+    setOpenBackDrop(true);
 
-    userSignUp(data)
+    userSignUp(loginForm)
       .then((res) => {
         console.log(res);
         setError(false);
         setMessage("SignUp successful");
         window.location.href = "/";
+        clearState();
+        setOpenBackDrop(false);
       })
       .catch((err) => {
         if (err.response.status === 400) {
+          setOpenBackDrop(false);
           setError(true);
           setMessage(err.response.data.message);
         }
@@ -88,10 +84,9 @@ function Login() {
   };
 
   const onLogin = (e) => {
-    const data = { userId, password };
     e.preventDefault();
-
-    userSignIn(data)
+    setOpenBackDrop(true);
+    userSignIn(loginForm)
       .then((res) => {
         console.log(res);
         setError(false);
@@ -111,35 +106,27 @@ function Login() {
         } else {
           window.location.href = "/admin";
         }
+        clearState();
+        setOpenBackDrop(false);
       })
       .catch((err) => {
         if (err.response.status) {
+          setOpenBackDrop(false);
           setError(true);
           setMessage(err.response.data.message);
         }
       });
   };
 
-  const updateSignUpData = (e) => {
-    const id = e.target.id;
-
-    if (id === "userId") {
-      setUserId(e.target.value);
-    } else if (id === "password") {
-      setPassword(e.target.value);
-    } else if (id === "email") {
-      setUserEmail(e.target.value);
-    } else {
-      setUserName(e.target.value);
-    }
-  };
-
-  const handleSelect = (e) => {
-    setUserType(e);
-  };
-
   return (
-    <div className="bg-primary d-flex justify-content-center align-items-center vh-100">
+    <div
+      className=" d-flex justify-content-center align-items-center vh-100"
+      style={{
+        backgroundImage: `url(" https://source.unsplash.com/random/?Animals+Art+Textures+Landscape&1")`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
       <div className="card p-4 rounded-4 shadow-lg align-items-center">
         <h4 className="text-info"> {showSignup ? "Sign Up" : "Log In"} </h4>
 
@@ -148,10 +135,11 @@ function Login() {
             <input
               className="form-control m-1"
               type="text"
-              value={userId}
+              value={loginForm.userId}
               id="userId"
-              onChange={updateSignUpData}
-              placeholder="UserId"
+              name="userId"
+              onChange={handleInputChange}
+              placeholder="userId"
             />
           </div>
 
@@ -161,19 +149,21 @@ function Login() {
                 <input
                   className="form-control m-1"
                   type="text"
-                  value={userName}
-                  id="userName"
-                  onChange={updateSignUpData}
-                  placeholder="Username"
+                  value={loginForm.name}
+                  id="name"
+                  name="name"
+                  onChange={handleInputChange}
+                  placeholder="Name"
                 />
               </div>
 
               <div className="input-group">
                 <input
+                  name="email"
                   className="form-control m-1"
-                  value={userEmail}
+                  value={loginForm.email}
                   id="email"
-                  onChange={updateSignUpData}
+                  onChange={handleInputChange}
                   type="email"
                   placeholder="Email"
                 />
@@ -184,26 +174,30 @@ function Login() {
           <div className="input-group">
             <input
               className="form-control m-1"
-              value={password}
+              value={loginForm.password}
               id="password"
-              onChange={updateSignUpData}
+              onChange={handleInputChange}
               type="password"
+              name="password"
               placeholder="Password"
             />
           </div>
 
           <div className="input-group">
             {showSignup && (
-              <DropdownButton
-                title={userType}
-                onSelect={handleSelect}
-                id="userType"
-                variant="light"
-                align="start"
-              >
-                <Dropdown.Item eventKey="CUSTOMER"> CUSTOMER </Dropdown.Item>
-                <Dropdown.Item eventKey="ENGINEER"> ENGINEER </Dropdown.Item>
-              </DropdownButton>
+              <div className="input-group m-1">
+                <span className="input-group-text"> UserType </span>
+
+                <select
+                  name="userType"
+                  value={loginForm.userType}
+                  onChange={handleInputChange}
+                  className="form-select"
+                >
+                  <option value="CUSTOMER"> CUSTOMER </option>
+                  <option value="ENGINEER"> ENGINEER </option>
+                </select>
+              </div>
             )}
           </div>
 
@@ -249,6 +243,12 @@ function Login() {
             {message}
           </div>
         </form>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={openBackDrop}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     </div>
   );

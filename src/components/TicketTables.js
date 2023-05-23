@@ -1,64 +1,58 @@
-import React, { useState } from "react";
+import React from "react";
 import MaterialTable from "material-table";
 import { Modal, Button } from "react-bootstrap";
-import { updateTicket } from "../api/ticket";
+import useUpdateTicket from "../hooks/useUpdateTicket";
+import fetchDisabledFields from "../utils/fetchDisabledData";
+import BackDrop from "./BackDrop";
+import AlertSnackBar from "./AlertSnackBar";
 
 const TicketTables = ({ ticketDetails, fetchTickets }) => {
-  const [selectedCurrTicket, setSelectedCurrTicket] = useState({});
-  const [ticketUpdateModal, setTicketUpdateModal] = useState(false);
+  const {
+    selectedCurrTicket,
+    ticketUpdateModal,
+    closeTicketUpdateModal,
+    updateTicketFn,
+    onTicketUpdate,
+    editTicket,
+    Loading,
+    Message,
+    AlertType,
+    OpenAlert,
+    setOpenAlert,
+  } = useUpdateTicket(fetchTickets);
 
-  const editTicket = (ticketDetail) => {
-    setTicketUpdateModal(true);
-    setSelectedCurrTicket(ticketDetail);
-  };
-
-  const closeTicketUpdateModal = () => {
-    setTicketUpdateModal(false);
-  };
-
-  const onTicketUpdate = (e) => {
-    const fieldName = e.target.name;
-
-    if (fieldName === "title") selectedCurrTicket.title = e.target.value;
-    else if (fieldName === "description")
-      selectedCurrTicket.description = e.target.value;
-    else if (fieldName === "status") selectedCurrTicket.status = e.target.value;
-    else if (fieldName === "assignee")
-      selectedCurrTicket.assignee = e.target.value;
-    else if (fieldName === "ticketPriority")
-      selectedCurrTicket.ticketPriority = e.target.value;
-
-    setSelectedCurrTicket({ ...selectedCurrTicket });
-  };
-
-  const updateTicketFn = (e) => {
-    e.preventDefault();
-
-    updateTicket(selectedCurrTicket)
-      .then((res) => {
-        console.log("Ticket update successfully");
-        setTicketUpdateModal(false);
-        fetchTickets();
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
+  const disabledFields = fetchDisabledFields();
 
   return (
-    <div>
+    <div className="container">
       <MaterialTable
         title="Tickets"
         columns={[
-          { title: "ID", field: "_id" },
+          { title: "ID", field: "_id", filtering: false },
           { title: "Title", field: "title" },
           { title: "Priority", field: "ticketPriority", type: "numeric" },
           { title: "Description", field: "description" },
           { title: "Assignee", field: "assignee" },
-          { title: "Status", field: "status" },
+          {
+            title: "Status",
+            field: "status",
+            lookup: {
+              OPEN: "OPEN",
+              CLOSED: "CLOSED",
+              INPROGRESS: "INPROGRESS",
+              BLOCKED: "BLOCKED",
+            },
+          },
         ]}
         data={ticketDetails}
         onRowClick={(event, rowData) => editTicket(rowData)}
+        options={{
+          headerStyle: {
+            backgroundColor: "#01579b",
+            color: "#FFF",
+          },
+          filtering: true,
+        }}
       />
       <Modal show={ticketUpdateModal} onHide={closeTicketUpdateModal}>
         <Modal.Header closeButton>
@@ -79,12 +73,14 @@ const TicketTables = ({ ticketDetails, fetchTickets }) => {
                   name="title"
                   value={selectedCurrTicket.title}
                   onChange={onTicketUpdate}
+                  disabled={disabledFields.title}
                 />
               </div>
 
               <div className="input-group mb-3">
                 <span className="input-group-text"> Assignee </span>
                 <input
+                  disabled={disabledFields.assignee}
                   type="text"
                   name="assignee"
                   value={selectedCurrTicket.assignee}
@@ -100,6 +96,7 @@ const TicketTables = ({ ticketDetails, fetchTickets }) => {
                   value={selectedCurrTicket.status}
                   onChange={onTicketUpdate}
                   className="form-select"
+                  disabled={disabledFields.status}
                 >
                   <option value="OPEN"> OPEN </option>
                   <option value="INPROGRESS"> INPROGRESS </option>
@@ -116,6 +113,7 @@ const TicketTables = ({ ticketDetails, fetchTickets }) => {
                   rows="4"
                   value={selectedCurrTicket.description}
                   onChange={onTicketUpdate}
+                  disabled={disabledFields.description}
                 />
               </div>
 
@@ -126,6 +124,7 @@ const TicketTables = ({ ticketDetails, fetchTickets }) => {
                   name="ticketPriority"
                   value={selectedCurrTicket.ticketPriority}
                   onChange={onTicketUpdate}
+                  disabled={disabledFields.priority}
                 />
               </div>
             </div>
@@ -139,7 +138,14 @@ const TicketTables = ({ ticketDetails, fetchTickets }) => {
           </form>
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
+        <BackDrop openBackDrop={Loading} />
       </Modal>
+      <AlertSnackBar
+        Message={Message}
+        AlertType={AlertType}
+        OpenAlert={OpenAlert}
+        setOpenAlert={setOpenAlert}
+      />
     </div>
   );
 };

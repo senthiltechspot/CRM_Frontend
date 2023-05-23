@@ -6,7 +6,7 @@ const StatusDashBoard = ({ ticketLength, statsData }) => {
   const userName = localStorage.getItem("name");
   
   return (
-    <div className="container">
+    <div className="container bg-light p-4 rounded">
       <div>
         <h3 className="text-primary text-center"> Welcome, {userName} </h3>
         <p className="text-center text-muted">
