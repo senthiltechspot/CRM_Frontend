@@ -1,25 +1,13 @@
-import { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import TicketTables from "../components/TicketTables";
-import { useNavigate } from "react-router-dom";
 import StatusDashBoard from "../components/StatusDashboard/StatusDashBoard";
 import useFetchTickets from "../hooks/useFetchTickets";
 import { createTicketsCount } from "../handlers/createTicketsCount";
+import { Skeleton } from "@mui/material";
 
 function Customer() {
-  const navigate = useNavigate();
-  const userType = localStorage.getItem("userType");
   const [ticketDetails, fetchTickets] = useFetchTickets();
   const statsData = createTicketsCount(ticketDetails);
-
-  useEffect(() => {
-    if (userType === "ADMIN") {
-      navigate("/admin");
-    } else if (userType === "CUSTOMER") {
-      navigate("/customer");
-    }
-    console.log("first");
-  }, []);
 
   return (
     <div
@@ -40,10 +28,16 @@ function Customer() {
         />
 
         <hr />
-        <TicketTables
-          ticketDetails={ticketDetails}
-          fetchTickets={fetchTickets}
-        />
+        <div className="container">
+          {ticketDetails.length > 0 ? (
+            <TicketTables
+              ticketDetails={ticketDetails}
+              fetchTickets={fetchTickets}
+            />
+          ) : (
+            <Skeleton variant="rounded" width={"100%"} height={"60vh"} />
+          )}
+        </div>
       </div>
     </div>
   );

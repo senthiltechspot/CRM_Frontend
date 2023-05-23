@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { updateUser } from "../api/users";
+import { alertContext } from "../context/AlertContext";
 
 const useUpdateUser = (fetchUsers) => {
   const [usersUpdateModal, setUsersUpdateModal] = useState(false);
   const [selectedCurrUser, setSelectedCurrUser] = useState(false);
   const [Loading, setLoading] = useState(false);
-  const [OpenAlert, setOpenAlert] = useState(false);
-  const [Message, setMessage] = useState(false);
-  const [AlertType, setAlertType] = useState("info");
+
+  const [, setOpenAlert, , setMessage, , setAlertType] =
+    useContext(alertContext);
 
   const closeUsersUpdateModal = () => {
     setUsersUpdateModal(false);
@@ -64,10 +65,6 @@ const useUpdateUser = (fetchUsers) => {
     changeUserDetails,
     updateUserFn,
     Loading,
-    Message,
-    AlertType,
-    OpenAlert,
-    setOpenAlert,
   };
 };
 

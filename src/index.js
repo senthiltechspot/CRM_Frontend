@@ -8,6 +8,8 @@ import "@coreui/coreui/dist/css/coreui.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-circular-progressbar/dist/styles.css";
 import { createTheme, ThemeProvider } from "@mui/material";
+import AlertDetailsProvider from "./context/AlertContext";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const theme = createTheme();
@@ -15,7 +17,9 @@ const theme = createTheme();
 root.render(
   <>
     <ThemeProvider theme={theme}>
-      <App />
+      <AlertDetailsProvider>
+        <App />
+      </AlertDetailsProvider>
     </ThemeProvider>
   </>
 );

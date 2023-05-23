@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { updateTicket } from "../api/ticket";
+import { alertContext } from "../context/AlertContext";
 
 const useUpdateTicket = (fetchTickets) => {
   const [ticketUpdateModal, setTicketUpdateModal] = useState(false);
   const [selectedCurrTicket, setSelectedCurrTicket] = useState({});
   const [Loading, setLoading] = useState(false);
-  const [OpenAlert, setOpenAlert] = useState(false);
-  const [Message, setMessage] = useState(false);
-  const [AlertType, setAlertType] = useState("info");
+  const [, setOpenAlert, , setMessage, , setAlertType] =
+    useContext(alertContext);
 
   const editTicket = (ticketDetail) => {
-    setTicketUpdateModal(true);
     setSelectedCurrTicket(ticketDetail);
+    setTicketUpdateModal(true);
   };
 
   const closeTicketUpdateModal = () => {
@@ -64,10 +64,6 @@ const useUpdateTicket = (fetchTickets) => {
     updateTicketFn,
     onTicketUpdate,
     Loading,
-    Message,
-    AlertType,
-    OpenAlert,
-    setOpenAlert,
   };
 };
 

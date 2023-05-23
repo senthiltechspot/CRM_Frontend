@@ -20,5 +20,10 @@ const ticketStatus = {
 const userAttributeFields = {
   userType: "userType",
 };
-
-export default { userStatus, userTypes, ticketStatus, userAttributeFields };
+const constants = {
+  userStatus,
+  userTypes,
+  ticketStatus,
+  userAttributeFields,
+};
+export default constants;

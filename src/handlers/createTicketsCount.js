@@ -1,3 +1,5 @@
+import constants from "../utils/constants";
+
 export const createTicketsCount = (tickets) => {
   const data = {
     open: 0,
@@ -7,9 +9,11 @@ export const createTicketsCount = (tickets) => {
   };
 
   tickets.forEach((ticket) => {
-    if (ticket.status === "OPEN") data.open += 1;
-    else if (ticket.status === "INPROGRESS") data.inprogress += 1;
-    else if (ticket.status === "BLOCKED") data.blocked += 1;
+    if (ticket.status === constants.ticketStatus.open) data.open += 1;
+    else if (ticket.status === constants.ticketStatus.inProgress)
+      data.inprogress += 1;
+    else if (ticket.status === constants.ticketStatus.blocked)
+      data.blocked += 1;
     else data.closed += 1;
   });
 

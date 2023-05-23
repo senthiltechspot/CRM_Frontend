@@ -1,13 +1,23 @@
-import { useState } from "react";
-import { userSignUp, userSignIn } from "../api/auth";
-import { Backdrop, CircularProgress } from "@mui/material";
+import { useContext, useState } from "react";
+// import { userSignUp, userSignIn } from "../api/auth";
+// import { Backdrop, CircularProgress } from "@mui/material";
+import HandleLogin from "../handlers/HandleLogin";
+import { alertContext } from "../context/AlertContext";
+import HandleSignUp from "../handlers/HandleSignUp";
 
 function Login() {
   const [showSignup, setShowSignUp] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const [openBackDrop, setOpenBackDrop] = useState(false);
-
+  const [
+    ,
+    setOpenAlert,
+    Message,
+    setMessage,
+    ,
+    setAlertType,
+    ,
+    setOpenBackDrop,
+  ] = useContext(alertContext);
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -44,78 +54,33 @@ function Login() {
       userId: "",
       userType: "CUSTOMER",
     });
+    setMessage("");
   };
 
   const onSignUp = (e) => {
     e.preventDefault();
-
-    if (loginForm.userId.length < 5) {
-      setError(true);
-      setMessage("userId should be of 5 to 10 characters");
-      return;
-    } else if (
-      loginForm.password.length < 5 ||
-      loginForm.password.length > 12
-    ) {
-      setError(true);
-      setMessage("Password should of 5 to 12 characters");
-      return;
-    }
-
-    //API call
-    setOpenBackDrop(true);
-
-    userSignUp(loginForm)
-      .then((res) => {
-        console.log(res);
-        setError(false);
-        setMessage("SignUp successful");
-        window.location.href = "/";
-        clearState();
-        setOpenBackDrop(false);
-      })
-      .catch((err) => {
-        if (err.response.status === 400) {
-          setOpenBackDrop(false);
-          setError(true);
-          setMessage(err.response.data.message);
-        }
-      });
+    HandleSignUp(
+      setMessage,
+      setError,
+      loginForm,
+      setOpenBackDrop,
+      setOpenAlert,
+      setAlertType
+    );
+    clearState();
   };
 
   const onLogin = (e) => {
     e.preventDefault();
-    setOpenBackDrop(true);
-    userSignIn(loginForm)
-      .then((res) => {
-        console.log(res);
-        setError(false);
-        setMessage("Login Successful");
-
-        localStorage.setItem("name", res.data.name);
-        localStorage.setItem("userId", res.data.userId);
-        localStorage.setItem("email", res.data.email);
-        localStorage.setItem("userStatus", res.data.userStatus);
-        localStorage.setItem("token", res.data.accessToken);
-        localStorage.setItem("userType", res.data.userType);
-
-        if (res.data.userType === "ENGINEER") {
-          window.location.href = "/engineer";
-        } else if (res.data.userType === "CUSTOMER") {
-          window.location.href = "/customer";
-        } else {
-          window.location.href = "/admin";
-        }
-        clearState();
-        setOpenBackDrop(false);
-      })
-      .catch((err) => {
-        if (err.response.status) {
-          setOpenBackDrop(false);
-          setError(true);
-          setMessage(err.response.data.message);
-        }
-      });
+    HandleLogin(
+      setMessage,
+      setError,
+      loginForm,
+      setOpenBackDrop,
+      setOpenAlert,
+      setAlertType
+    );
+    clearState();
   };
 
   return (
@@ -240,15 +205,9 @@ function Login() {
           </div>
 
           <div className={error ? "text-danger" : "text-success"}>
-            {message}
+            {Message}
           </div>
         </form>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openBackDrop}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
       </div>
     </div>
   );
