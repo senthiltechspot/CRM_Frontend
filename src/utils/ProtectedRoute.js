@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/" replace />;
   }
 
-  const page = location.pathname.slice(1);
+  const page = location.pathname.split("/")[1];
 
   var requiredUserType = null;
 

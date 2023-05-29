@@ -22,7 +22,7 @@ function Login() {
     email: "",
     password: "",
     name: "",
-    userId: "",
+    username: "",
     userType: "CUSTOMER",
   });
 
@@ -51,7 +51,7 @@ function Login() {
       email: "",
       password: "",
       name: "",
-      userId: "",
+      username: "",
       userType: "CUSTOMER",
     });
     setMessage("");
@@ -100,11 +100,11 @@ function Login() {
             <input
               className="form-control m-1"
               type="text"
-              value={loginForm.userId}
-              id="userId"
-              name="userId"
+              value={loginForm.username}
+              id="username"
+              name="username"
               onChange={handleInputChange}
-              placeholder="userId"
+              placeholder="username"
             />
           </div>
 

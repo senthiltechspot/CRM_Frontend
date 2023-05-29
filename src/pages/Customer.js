@@ -4,10 +4,27 @@ import StatusDashBoard from "../components/StatusDashboard/StatusDashBoard";
 import useFetchTickets from "../hooks/useFetchTickets";
 import { createTicketsCount } from "../handlers/createTicketsCount";
 import { Skeleton } from "@mui/material";
+import TicketCreationModal from "../components/TicketCreationModal";
+import useCreateTicket from "../hooks/useCreateTicket";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 function Customer() {
+  const location = useLocation();
   const [ticketDetails, fetchTickets] = useFetchTickets();
   const statsData = createTicketsCount(ticketDetails);
+  const { createTicketModal, openCreateTicketModal, closeCreateTicketModal } =
+    useCreateTicket();
+
+  useEffect(() => {
+    const path = location.pathname;
+
+    const isCreateTicketTrue = path.split("/")[2] === "createTicket";
+    if (isCreateTicketTrue) {
+      openCreateTicketModal();
+    }
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div
@@ -26,6 +43,16 @@ function Customer() {
           ticketLength={ticketDetails.length}
           statsData={statsData}
         />
+        <hr />
+        <div className="container">
+          <input
+            className="bg-primary border-white text-white"
+            style={{ width: "100%" }}
+            onClick={openCreateTicketModal}
+            type="submit"
+            value="RAISE TICKET"
+          />
+        </div>
 
         <hr />
         <div className="container">
@@ -38,6 +65,11 @@ function Customer() {
             <Skeleton variant="rounded" width={"100%"} height={"60vh"} />
           )}
         </div>
+        <TicketCreationModal
+          show={createTicketModal}
+          onClose={closeCreateTicketModal}
+          fetchTickets={fetchTickets}
+        />
       </div>
     </div>
   );

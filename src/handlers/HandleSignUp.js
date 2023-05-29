@@ -8,9 +8,9 @@ const HandleSignUp = (
   setOpenAlert,
   setAlertType
 ) => {
-  if (loginForm.userId.length < 5) {
+  if (loginForm.username.length < 5) {
     setError(true);
-    setMessage("userId should be of 5 to 10 characters");
+    setMessage("username should be of 5 to 10 characters");
     return;
   } else if (loginForm.password.length < 5 || loginForm.password.length > 12) {
     setError(true);

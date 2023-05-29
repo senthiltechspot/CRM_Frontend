@@ -13,7 +13,7 @@ const TicketTables = ({ ticketDetails, fetchTickets }) => {
     onTicketUpdate,
     Loading,
   } = useUpdateTicket(fetchTickets);
-
+console.log(ticketDetails)
   return (
     <div className="container">
       <MaterialTable

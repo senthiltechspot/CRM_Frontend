@@ -9,27 +9,25 @@ import AlertSnackBar from "./components/AlertSnackBar";
 import { alertContext } from "./context/AlertContext";
 import { useContext } from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
-// import AlertDetailsProvider from "./context/AlertContext";
 
 function App() {
-  const [
-    OpenAlert,
-    setOpenAlert,
-    Message,
-    ,
-    AlertType,
-    ,
-    openBackDrop,
-    ,
-  ] = useContext(alertContext);
+  const [OpenAlert, setOpenAlert, Message, , AlertType, , openBackDrop, ,] =
+    useContext(alertContext);
   return (
     <div>
-      {/* <AlertDetailsProvider> */}
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route
             path="/customer"
+            element={
+              <ProtectedRoute>
+                <Customer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/customer/createTicket"
             element={
               <ProtectedRoute>
                 <Customer />
@@ -52,9 +50,17 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/:username"
+            element={
+              <ProtectedRoute>
+                {" "}
+                <Admin />{" "}
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
-      {/* </AlertDetailsProvider> */}
       <AlertSnackBar
         Message={Message}
         AlertType={AlertType}

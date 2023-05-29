@@ -22,7 +22,7 @@ const UserTable = ({ userDetails, fetchUsers }) => {
           { title: "ID", field: "_id", filtering: false },
           { title: "NAME", field: "name" },
           { title: "EMAIL", field: "email" },
-          { title: "USER ID", field: "userId" },
+          { title: "USER ID", field: "username" },
           {
             title: "USER TYPE",
             field: "userTypes",

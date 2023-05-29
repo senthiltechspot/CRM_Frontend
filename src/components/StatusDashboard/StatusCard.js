@@ -10,9 +10,10 @@ const StatusCard = ({
   bicon,
   type,
 }) => {
+
   return (
     <div className="col-xs-12 col-lg-3 col-md-6 my-1">
-      {statsData ? (
+      {ticketLength ? (
         <div
           className={
             "card cardItem shadow text-dark bg-opacity-25 border  " +

@@ -16,7 +16,7 @@ const HandleLogin = (
       setMessage("Login Successful");
 
       localStorage.setItem("name", res.data.name);
-      localStorage.setItem("userId", res.data.userId);
+      localStorage.setItem("username", res.data.username);
       localStorage.setItem("email", res.data.email);
       localStorage.setItem("userStatus", res.data.userStatus);
       localStorage.setItem("token", res.data.accessToken);
