@@ -73,7 +73,9 @@ function App() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <footer className="d-flex justify-content-center">
+      <footer className="d-flex justify-content-center"
+          style={{ backgroundColor: "#22222200" }}
+>
           <h6>
             © Designed and Developed by{" "}
             <a href="https://github.com/Senthilspot"> Senthilspot</a>
