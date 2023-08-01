@@ -77,8 +77,8 @@ function App() {
           style={{ backgroundColor: "#22222200" }}
 >
           <h6>
-            © Designed and Developed by{" "}
-            <a href="https://github.com/Senthilspot"> Senthilspot</a>
+            © Designed and Developed by
+            <a href="https://github.com/SenthilTechSpot"> SenthilTechSpot</a>
           </h6>
       </footer>
     </div>
