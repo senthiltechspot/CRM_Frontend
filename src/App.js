@@ -73,10 +73,12 @@ function App() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <h6>
-            © Designed and Developed by
+      <footer className="d-flex justify-content-center">
+          <h6>
+            © Designed and Developed by{" "}
             <a href="https://github.com/Senthilspot"> Senthilspot</a>
-      </h6>
+          </h6>
+      </footer>
     </div>
   );
 }
