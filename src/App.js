@@ -73,6 +73,10 @@ function App() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <h6>
+            © Designed and Developed by
+            <a href="https://github.com/Senthilspot"> Senthilspot</a>
+      </h6>
     </div>
   );
 }
