@@ -1,3 +1,9 @@
+# CRM FRONTEND APP
+ <h6>
+            © Designed and Developed by
+            <a href="https://github.com/Senthiltechspot"> SenthilTechSpot</a>
+</h6>
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -71,5 +77,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 <h6>
   © Designed and Developed by
-  <a href="https://github.com/Senthilspot"> Senthilspot</a>
+  <a href="https://github.com/SenthilTechSpot"> SenthilTechSpot</a>
 </h6>
